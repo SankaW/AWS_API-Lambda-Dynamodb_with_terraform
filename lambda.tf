@@ -5,7 +5,7 @@ data "aws_caller_identity" "current" {}
 #   name = var.api_name
 # }
 
-resource "aws_lambda_function" "get_all_data" {
+resource "aws_lambda_function" "get_all_data" {  
   function_name = var.lambda_function_name
   handler       = "lambda_function.lambda_handler"
   runtime       = "python3.9"
@@ -48,6 +48,9 @@ resource "aws_iam_policy" "lambda_dynamodb_policy" {
       {
         Action = [
           "dynamodb:Scan",
+          "dynamodb:GetItem",
+          "dynamodb:PutItem",
+          "dynamodb:DeleteItem"
         ],
         Effect   = "Allow",
         Resource = aws_dynamodb_table.warehouse_robot_logs.arn,
