@@ -14,7 +14,7 @@ response = dynamodb.batch_write_item(
                 "PutRequest": {
                     "Item": {
                         "timestamp": {"S": "1724674600"},
-                        "log_id": {"S": "1"},
+                        "id": {"S": "1"},
                         "robot_id": {"S": "RW-001"},
                         "power_source": {"S": "battery"},
                         "battery_voltage": {"N": "12.7"},
@@ -31,7 +31,7 @@ response = dynamodb.batch_write_item(
                 "PutRequest": {
                     "Item": {
                         "timestamp": {"S": "1724674610"},
-                        "log_id": {"S": "2"},
+                        "id": {"S": "2"},
                         "robot_id": {"S": "RW-002"},
                         "power_source": {"S": "grid"},
                         "battery_voltage": {"N": "230.0"},
@@ -48,7 +48,7 @@ response = dynamodb.batch_write_item(
                 "PutRequest": {
                     "Item": {
                         "timestamp": {"S": "1724674620"},
-                        "log_id": {"S": "3"},
+                        "id": {"S": "3"},
                         "robot_id": {"S": "RW-003"},
                         "power_source": {"S": "battery"},
                         "battery_voltage": {"N": "11.9"},
