@@ -13,7 +13,7 @@ class DecimalEncoder(json.JSONEncoder):
             # Convert Decimal to float for JSON serialization
             return float(o)
         return super(DecimalEncoder, self).default(o)
-    
+        
 def convert_float_to_decimal(item):
     """Recursively convert float to Decimal in the item dict."""
     if isinstance(item, list):
@@ -29,23 +29,53 @@ def lambda_handler(event, context):
     http_method = event['httpMethod']
     
     if http_method == 'GET':
-        # Get all items from DynamoDB
-        response = table.scan()
-        items = response.get('Items', [])
-        return {
-            'statusCode': 200,
-            'body': json.dumps(items, cls=DecimalEncoder, indent=2) # Use the custom
-        }
+        path_parameters = event.get('pathParameters')
+        if path_parameters and 'id' in path_parameters:
+            # Get one item by id from DynamoDB
+            item_id = path_parameters['id']
+            response = table.get_item(Key={'id': item_id})
+            item = response.get('Item')
+            if item:
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps(item, cls=DecimalEncoder)  # Use the custom DecimalEncoder
+                }
+            else:
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps({'message': 'Item not found'})
+                }
+        else:
+            # Get all items from DynamoDB
+            response = table.scan()
+            items = response.get('Items', [])
+            return {
+                'statusCode': 200,
+                'body': json.dumps(items, cls=DecimalEncoder, indent=2)  # Pretty-print JSON using DecimalEncoder
+            }
     
     elif http_method == 'POST':
         # Add a new item to DynamoDB
-        item = json.loads(event['body'])
-        item = convert_float_to_decimal(item)  # Convert floats to Decimals
-        table.put_item(Item=item)
-        return {
-            'statusCode': 201,
-            'body': json.dumps({'message': 'Item created successfully'})
-        }
+        body = event.get('body')
+        if body:
+            item = json.loads(body)
+            item = convert_float_to_decimal(item)  # Convert floats to Decimals
+            try:
+                table.put_item(Item=item)
+                return {
+                    'statusCode': 201,
+                    'body': json.dumps({'message': 'Item created successfully'})
+                }
+            except Exception as e:
+                return {
+                    'statusCode': 500,
+                    'body': json.dumps({'message': str(e)})
+                }
+        else:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Invalid input'})
+            }
     
     else:
         return {
