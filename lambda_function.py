@@ -77,6 +77,36 @@ def lambda_handler(event, context):
                 'body': json.dumps({'message': 'Invalid input'})
             }
     
+    elif http_method == 'DELETE':
+        path_parameters = event.get('pathParameters')
+        if path_parameters and 'id' in path_parameters:
+            # Delete item by id from DynamoDB
+            item_id = path_parameters['id']
+            try:
+                response = table.delete_item(
+                    Key={'id': item_id},
+                    ConditionExpression="attribute_exists(id)"
+                )
+                return {
+                    'statusCode': 200,
+                    'body': json.dumps({'message': 'Item deleted successfully'})
+                }
+            except dynamodb.meta.client.exceptions.ConditionalCheckFailedException:
+                return {
+                    'statusCode': 404,
+                    'body': json.dumps({'message': 'Item not found'})
+                }
+            except Exception as e:
+                return {
+                    'statusCode': 500,
+                    'body': json.dumps({'message': str(e)})
+                }
+        else:
+            return {
+                'statusCode': 400,
+                'body': json.dumps({'message': 'Invalid input'})
+            }
+    
     else:
         return {
             'statusCode': 405,

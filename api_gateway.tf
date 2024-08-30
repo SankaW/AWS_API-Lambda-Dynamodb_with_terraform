@@ -54,23 +54,23 @@ resource "aws_api_gateway_integration" "post_integration" {
   uri                     = aws_lambda_function.get_all_data.invoke_arn
 }
 
-# # DELETE Method Integration for /logs/{id}
-# resource "aws_api_gateway_method" "delete_method" {
-#   rest_api_id   = aws_api_gateway_rest_api.warehouse_api.id
-#   resource_id   = aws_api_gateway_resource.log_id_resource.id
-#   http_method   = "DELETE"
-#   authorization = "NONE"
-#   api_key_required = true
-# }
+# DELETE Method Integration for /logs/{id}
+resource "aws_api_gateway_method" "delete_method" {
+  rest_api_id   = aws_api_gateway_rest_api.warehouse_api.id
+  resource_id   = aws_api_gateway_resource.log_id_resource.id
+  http_method   = "DELETE"
+  authorization = "NONE"
+  api_key_required = true
+}
 
-# resource "aws_api_gateway_integration" "delete_integration" {
-#   rest_api_id             = aws_api_gateway_rest_api.warehouse_api.id
-#   resource_id             = aws_api_gateway_resource.log_id_resource.id
-#   http_method             = aws_api_gateway_method.delete_method.http_method
-#   integration_http_method = "POST"
-#   type                    = "AWS_PROXY"
-#   uri                     = aws_lambda_function.get_all_data.invoke_arn
-# }
+resource "aws_api_gateway_integration" "delete_integration" {
+  rest_api_id             = aws_api_gateway_rest_api.warehouse_api.id
+  resource_id             = aws_api_gateway_resource.log_id_resource.id
+  http_method             = aws_api_gateway_method.delete_method.http_method
+  integration_http_method = "POST"
+  type                    = "AWS_PROXY"
+  uri                     = aws_lambda_function.get_all_data.invoke_arn
+}
 
 
 # GET Method Integration for /logs (Get all items)
@@ -96,8 +96,8 @@ resource "aws_api_gateway_deployment" "warehouse_api_deployment" {
   depends_on = [
     aws_api_gateway_integration.get_integration,
     aws_api_gateway_integration.get_by_id_integration,
-    aws_api_gateway_integration.post_integration
-    #aws_api_gateway_integration.delete_integration
+    aws_api_gateway_integration.post_integration,
+    aws_api_gateway_integration.delete_integration
   ]
   rest_api_id = aws_api_gateway_rest_api.warehouse_api.id
   stage_name  = "prod"
