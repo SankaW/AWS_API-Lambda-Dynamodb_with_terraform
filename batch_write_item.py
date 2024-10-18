@@ -8,7 +8,7 @@ table_name = "WarehouseRobotLogs"
 
 # Batch write data to DynamoDB
 response = dynamodb.batch_write_item(
-    RequestItems={
+    RequestItems={  
         table_name: [
             {
                 "PutRequest": {
