@@ -5,6 +5,7 @@ UI1.jpeg
 ~$arhouse robot.docx
 .terraform/
 WarehouseRobotAPI-prod-oas30-postman.json
+WarehouseRobotAPI-prod-oas30-postman2.json
 data_file.csv
 terraform.tfstate
 terraform.tfstate.backup
