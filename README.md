@@ -69,3 +69,34 @@ All the resources and methods for the API Gateway are defined in the `api_gatewa
 Please refer to the [api_gateway.tf](api_gateway.tf) file for the full Terraform code implementation.
 
 
+### Lambda Function
+
+The Lambda function (`lambda_function.py`) is the core of this project. It performs the following actions:
+
+- **GET** `/logs/{id}`: Fetches a specific log entry from DynamoDB using the log's unique ID.
+- **GET** `/logs`: Retrieves all log entries from DynamoDB.
+- **POST** `/logs`: Inserts a new log entry into DynamoDB.
+- **DELETE** `/logs/{id}`: Deletes a specific log entry from DynamoDB using its ID.
+
+Additionally, the Lambda function includes:
+- A custom JSON encoder to handle DynamoDB's `Decimal` data type when serializing data to JSON.
+- A helper function to convert floats to Decimals before storing them in DynamoDB, ensuring accurate handling of numeric data.
+
+You can find the full implementation in the `lambda_function.py` file.
+
+
+### Full File List
+
+This project comprises several key files that define and manage the infrastructure:
+
+- **`lambda.tf`**: Configures the AWS Lambda function, including its IAM roles and permissions. This file sets up the function's runtime environment, handler, and the necessary policies for execution.
+
+- **`dynamodb.tf`**: Defines the DynamoDB table used to store warehouse robot logs. It specifies the table's schema, including primary keys and any necessary indexes.
+
+- **`api_gateway.tf`**: Configures API Gateway resources and methods, linking them to the Lambda functions. This setup enables the API endpoints that interact with the Lambda function to process incoming requests.
+
+- **`variables.tf`**: Manages all the variables used across the Terraform scripts, allowing for easy customization and maintenance of the infrastructure code.
+
+- **`main.tf`**: The main file that brings together all resources to deploy. It orchestrates the creation of the Lambda function, DynamoDB table, and API Gateway, ensuring they are properly interconnected.
+
+- **`batch_write_item.py`**: A Python script for batch writing data to DynamoDB. This utility helps in populating the DynamoDB table with initial data or during testing phases.
